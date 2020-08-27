@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "invview",
+  "version": "${version}",
+  "name": "InvView",
+  "description": "Allows you to open the inventory and ender chest of online and offline players",
+  "authors": [
+    "Potatoboy9999"
+  ],
+  "contact": {
+    "website": "test.com",
+    "repo": "test.com"
+  },
+  "license": "MIT",
+  "icon": "assets/invview/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "us.potatoboy.invview.InvView"
+    ]
+  },
+  "mixins": [
+    "InvView.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.9.2+build.206",
+    "fabric": "*",
+    "minecraft": ">=1.16.2"
+  }
+}
