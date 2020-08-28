@@ -8,11 +8,13 @@
     "Potatoboy9999"
   ],
   "contact": {
-    "website": "test.com",
-    "repo": "test.com"
+    "website": "https://www.curseforge.com/minecraft/mc-mods/inv-view",
+    "sources": "https://github.com/PotatoPresident/InvView",
+    "issues": "https://github.com/PotatoPresident/InvView/issues",
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/inv-view"
   },
   "license": "MIT",
-  "icon": "assets/invview/icon.png",
+  "icon": "logo.png",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -23,7 +25,7 @@
     "InvView.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.9.2+build.206",
+    "fabricloader": ">=0.7.2",
     "fabric": "*",
     "minecraft": ">=1.16.2"
   }
