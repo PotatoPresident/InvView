@@ -4,7 +4,6 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.network.C2SPacketTypeCallback;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
@@ -24,7 +23,6 @@ public class InvView implements ModInitializer {
     @Override
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-            //ViewInvCommand.register(dispatcher);
 
             LiteralCommandNode<ServerCommandSource> viewNode = CommandManager
                     .literal("view")
@@ -72,5 +70,4 @@ public class InvView implements ModInitializer {
             LogManager.getLogger().warn("Failed to save player data for {}", player.getName().getString());
         }
     }
-
 }

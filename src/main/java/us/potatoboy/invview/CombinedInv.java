@@ -2,12 +2,8 @@ package us.potatoboy.invview;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EnderChestInventory;
-import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.collection.DefaultedList;
 
 public class CombinedInv extends PlayerInventory {
     private PlayerInventory inventory;
@@ -15,7 +11,6 @@ public class CombinedInv extends PlayerInventory {
     public CombinedInv(ServerPlayerEntity player) {
         super(player);
         inventory = player.inventory;
-        inventory.setStack(42, new ItemStack(Items.RED_STAINED_GLASS_PANE));
     }
 
     @Override
@@ -35,7 +30,6 @@ public class CombinedInv extends PlayerInventory {
 
     @Override
     public void setStack(int slot, ItemStack stack) {
-        if (slot > 40) return;
         inventory.setStack(slot, stack);
     }
 
@@ -47,5 +41,10 @@ public class CombinedInv extends PlayerInventory {
     @Override
     public ItemStack removeStack(int slot, int amount) {
         return inventory.removeStack(slot, amount);
+    }
+
+    @Override
+    public boolean canPlayerUse(PlayerEntity player) {
+        return true;
     }
 }
