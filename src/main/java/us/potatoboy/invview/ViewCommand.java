@@ -4,43 +4,76 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.argument.GameProfileArgumentType;
+import net.minecraft.entity.passive.AbstractDonkeyEntity;
+import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.inventory.EnderChestInventory;
+import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import us.potatoboy.invview.gui.EnderChestScreenHandler;
+import us.potatoboy.invview.gui.PlayerInventoryScreenHandler;
+import us.potatoboy.invview.mixin.HorseInventoryAccess;
 
 public class ViewCommand {
     private static MinecraftServer minecraftServer = InvView.getMinecraftServer();
 
-    public static int Inv(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    public static int inv(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().getPlayer();
-        ServerPlayerEntity requestedPlayer = GetRequestedPlayer(context);
-        CombinedInv combinedInventory = new CombinedInv(requestedPlayer);
+        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+
+        NamedScreenHandlerFactory screenHandlerFactory = new SimpleNamedScreenHandlerFactory((syncId, inv, playerEntity) ->
+                new PlayerInventoryScreenHandler(syncId, player.inventory, requestedPlayer.inventory),
+                requestedPlayer.getDisplayName()
+        );
+
+        player.openHandledScreen(screenHandlerFactory);
+        
+        return 1;
+    }
+
+    public static int eChest(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().getPlayer();
+        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+        EnderChestInventory requestedEchest = requestedPlayer.getEnderChestInventory();
 
         player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inv, playerEntity) ->
-                new GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X5, syncId, player.inventory, combinedInventory, 5),
+                new EnderChestScreenHandler(syncId, player.inventory, requestedEchest, 3, requestedPlayer),
                 requestedPlayer.getDisplayName()
         ));
 
         return 1;
     }
-
-    public static int EChest(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    /*
+    public static int mountInv(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().getPlayer();
-        ServerPlayerEntity requestedPlayer = GetRequestedPlayer(context);
-        EnderChestSavable requestedEchest = new EnderChestSavable(requestedPlayer);
+        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
 
-        player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inv, playerEntity) ->
-                GenericContainerScreenHandler.createGeneric9x3(syncId, player.inventory, requestedEchest),
-                requestedPlayer.getDisplayName()
-        ));
+        if (requestedPlayer.getVehicle() != null && requestedPlayer.getVehicle() instanceof HorseBaseEntity) {
+            HorseBaseEntity mount = (HorseBaseEntity) requestedPlayer.getVehicle();
 
+            mount.openInventory(player);
+            SimpleInventory inventory = ((HorseInventoryAccess)mount).getItems();
+            player.openHorseInventory(mount, inventory);
+
+            if (player.currentScreenHandler != player.playerScreenHandler) {
+                player.closeCurrentScreen();
+            }
+
+            //player.openHandledScreen(new CanOpenHorseScreenHandler(player.currentScreenHandler.syncId, player.inventory, inventory, mount));
+        }
         return 1;
     }
+     */
 
-    private static ServerPlayerEntity GetRequestedPlayer(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    private static ServerPlayerEntity getRequestedPlayer(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         GameProfile requestedProfile = GameProfileArgumentType.getProfileArgument(context, "target").iterator().next();
         ServerPlayerEntity requestedPlayer = minecraftServer.getPlayerManager().getPlayer(requestedProfile.getName());
 

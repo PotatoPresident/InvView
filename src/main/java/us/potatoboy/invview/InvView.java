@@ -32,18 +32,28 @@ public class InvView implements ModInitializer {
             LiteralCommandNode<ServerCommandSource> invNode = CommandManager
                     .literal("inv")
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
-                            .executes(ViewCommand::Inv))
+                            .executes(ViewCommand::inv))
                     .build();
 
             LiteralCommandNode<ServerCommandSource> echestNode = CommandManager
                     .literal("echest")
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
-                            .executes(ViewCommand::EChest))
+                            .executes(ViewCommand::eChest))
                     .build();
+
+            /*
+            LiteralCommandNode<ServerCommandSource> mountNode = CommandManager
+                    .literal("mountInv")
+                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
+                            .executes(ViewCommand::mountInv))
+                    .build();
+
+             */
 
             dispatcher.getRoot().addChild(viewNode);
             viewNode.addChild(invNode);
             viewNode.addChild(echestNode);
+            //viewNode.addChild(mountNode);
         });
 
         ServerLifecycleEvents.SERVER_STARTING.register(this::onLogicalServerStarting);
