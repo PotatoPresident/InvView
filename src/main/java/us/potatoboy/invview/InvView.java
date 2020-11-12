@@ -4,6 +4,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
@@ -19,9 +20,14 @@ import java.io.File;
 
 public class InvView implements ModInitializer {
     private static MinecraftServer minecraftServer;
+    private static boolean isTrinkets = false;
 
     @Override
     public void onInitialize() {
+        if (FabricLoader.getInstance().isModLoaded("trinkets")) {
+            isTrinkets = true;
+        }
+
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
 
             LiteralCommandNode<ServerCommandSource> viewNode = CommandManager
@@ -41,6 +47,12 @@ public class InvView implements ModInitializer {
                             .executes(ViewCommand::eChest))
                     .build();
 
+            LiteralCommandNode<ServerCommandSource> trinketNode = CommandManager
+                    .literal("trinkets")
+                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
+                            .executes(ViewCommand::trinkets))
+                    .build();
+
             /*
             LiteralCommandNode<ServerCommandSource> mountNode = CommandManager
                     .literal("mountInv")
@@ -53,6 +65,10 @@ public class InvView implements ModInitializer {
             dispatcher.getRoot().addChild(viewNode);
             viewNode.addChild(invNode);
             viewNode.addChild(echestNode);
+            if (isTrinkets) {
+                viewNode.addChild(trinketNode);
+            }
+
             //viewNode.addChild(mountNode);
         });
 

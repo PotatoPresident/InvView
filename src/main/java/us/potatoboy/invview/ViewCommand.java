@@ -3,6 +3,9 @@ package us.potatoboy.invview;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.emi.trinkets.api.TrinketComponent;
+import dev.emi.trinkets.api.TrinketSlots;
+import dev.emi.trinkets.api.TrinketsApi;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.entity.passive.AbstractDonkeyEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
@@ -20,7 +23,11 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import us.potatoboy.invview.gui.EnderChestScreenHandler;
 import us.potatoboy.invview.gui.PlayerInventoryScreenHandler;
+import us.potatoboy.invview.gui.TrinketScreenHandler;
 import us.potatoboy.invview.mixin.HorseInventoryAccess;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewCommand {
     private static MinecraftServer minecraftServer = InvView.getMinecraftServer();
@@ -72,6 +79,17 @@ public class ViewCommand {
         return 1;
     }
      */
+
+    public static int trinkets(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().getPlayer();
+        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+
+        player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inv, player1) ->
+                new TrinketScreenHandler(syncId, player.inventory, requestedPlayer),
+                requestedPlayer.getDisplayName()
+        ));
+        return 1;
+    }
 
     private static ServerPlayerEntity getRequestedPlayer(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         GameProfile requestedProfile = GameProfileArgumentType.getProfileArgument(context, "target").iterator().next();
