@@ -6,6 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketSlots;
 import dev.emi.trinkets.api.TrinketsApi;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.entity.passive.AbstractDonkeyEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
@@ -21,6 +22,8 @@ import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import us.potatoboy.invview.gui.EnderChestScreenHandler;
 import us.potatoboy.invview.gui.PlayerInventoryScreenHandler;
 import us.potatoboy.invview.gui.TrinketScreenHandler;
@@ -36,6 +39,10 @@ public class ViewCommand {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
 
+        if (isProtected(context, requestedPlayer)) {
+            return -1;
+        }
+
         NamedScreenHandlerFactory screenHandlerFactory = new SimpleNamedScreenHandlerFactory((syncId, inv, playerEntity) ->
                 new PlayerInventoryScreenHandler(syncId, player.inventory, requestedPlayer.inventory),
                 requestedPlayer.getDisplayName()
@@ -50,6 +57,10 @@ public class ViewCommand {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
         EnderChestInventory requestedEchest = requestedPlayer.getEnderChestInventory();
+
+        if (isProtected(context, requestedPlayer)) {
+            return -1;
+        }
 
         player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inv, playerEntity) ->
                 new EnderChestScreenHandler(syncId, player.inventory, requestedEchest, 3, requestedPlayer),
@@ -84,6 +95,10 @@ public class ViewCommand {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
 
+        if (isProtected(context, requestedPlayer)) {
+            return -1;
+        }
+
         player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inv, player1) ->
                 new TrinketScreenHandler(syncId, player.inventory, requestedPlayer),
                 requestedPlayer.getDisplayName()
@@ -101,5 +116,14 @@ public class ViewCommand {
         }
 
         return requestedPlayer;
+    }
+
+    private static boolean isProtected(CommandContext<ServerCommandSource> context, ServerPlayerEntity requested) throws CommandSyntaxException {
+        if (Permissions.check(requested, "invview.protected")) {
+            context.getSource().sendError(new LiteralText("Requested inventory is protected"));
+            return true;
+        }
+
+        return false;
     }
 }

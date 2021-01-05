@@ -11,6 +11,7 @@ repositories {
         name = "NerdHubMC"
         url = "https://maven.abusedmaster.xyz/"
     }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -34,6 +35,8 @@ dependencies {
 
     modImplementation "com.github.emilyploszaj:trinkets:${project.trinkets_version}"
 
+    modImplementation "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
+    include "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
 }
 
 processResources {

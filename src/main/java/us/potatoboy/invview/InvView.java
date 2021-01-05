@@ -1,6 +1,7 @@
 package us.potatoboy.invview;
 
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -32,23 +33,26 @@ public class InvView implements ModInitializer {
 
             LiteralCommandNode<ServerCommandSource> viewNode = CommandManager
                     .literal("view")
-                    .requires((source -> source.hasPermissionLevel(2)))
+                    .requires(Permissions.require("invview.view", 2))
                     .build();
 
             LiteralCommandNode<ServerCommandSource> invNode = CommandManager
                     .literal("inv")
+                    .requires(Permissions.require("invview.inv", 2))
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
                             .executes(ViewCommand::inv))
                     .build();
 
             LiteralCommandNode<ServerCommandSource> echestNode = CommandManager
                     .literal("echest")
+                    .requires(Permissions.require("invview.echest", 2))
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
                             .executes(ViewCommand::eChest))
                     .build();
 
             LiteralCommandNode<ServerCommandSource> trinketNode = CommandManager
                     .literal("trinkets")
+                    .requires(Permissions.require("invview.trinket", 2))
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
                             .executes(ViewCommand::trinkets))
                     .build();
