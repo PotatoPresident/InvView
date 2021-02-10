@@ -21,38 +21,38 @@ import java.io.File;
 
 public class InvView implements ModInitializer {
     private static MinecraftServer minecraftServer;
-    private static boolean isTrinkets = false;
+    public static boolean isTrinkets = false;
+    public static boolean isLuckPerms = false;
 
     @Override
     public void onInitialize() {
-        if (FabricLoader.getInstance().isModLoaded("trinkets")) {
-            isTrinkets = true;
-        }
+        isTrinkets = FabricLoader.getInstance().isModLoaded("trinkets");
+        isLuckPerms = FabricLoader.getInstance().isModLoaded("luckperms");
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
 
             LiteralCommandNode<ServerCommandSource> viewNode = CommandManager
                     .literal("view")
-                    .requires(Permissions.require("invview.view", 2))
+                    .requires(Permissions.require("invview.command.root", 2))
                     .build();
 
             LiteralCommandNode<ServerCommandSource> invNode = CommandManager
                     .literal("inv")
-                    .requires(Permissions.require("invview.inv", 2))
+                    .requires(Permissions.require("invview.command.inv", 2))
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
                             .executes(ViewCommand::inv))
                     .build();
 
             LiteralCommandNode<ServerCommandSource> echestNode = CommandManager
                     .literal("echest")
-                    .requires(Permissions.require("invview.echest", 2))
+                    .requires(Permissions.require("invview.command.echest", 2))
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
                             .executes(ViewCommand::eChest))
                     .build();
 
             LiteralCommandNode<ServerCommandSource> trinketNode = CommandManager
-                    .literal("trinkets")
-                    .requires(Permissions.require("invview.trinket", 2))
+                    .literal("trinket")
+                    .requires(Permissions.require("invview.command.trinket", 2))
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
                             .executes(ViewCommand::trinkets))
                     .build();

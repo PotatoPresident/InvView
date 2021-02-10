@@ -12,6 +12,7 @@ repositories {
         url = "https://maven.abusedmaster.xyz/"
     }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    mavenCentral()
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -37,6 +38,8 @@ dependencies {
 
     modImplementation "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
     include "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
+
+    compileOnly 'net.luckperms:api:5.2'
 }
 
 processResources {
@@ -69,6 +72,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
     from "LICENSE"
+}
+
+loom {
+    accessWidener "src/main/resources/invview.accesswidener"
 }
 
 // configure the maven publication
