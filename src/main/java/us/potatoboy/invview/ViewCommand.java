@@ -33,7 +33,7 @@ public class ViewCommand {
                 return;
             } else {
                 NamedScreenHandlerFactory screenHandlerFactory = new SimpleNamedScreenHandlerFactory((syncId, inv, playerEntity) ->
-                        new PlayerInventoryScreenHandler(syncId, player.inventory, requestedPlayer.inventory),
+                        new PlayerInventoryScreenHandler(syncId, player, requestedPlayer.inventory),
                         requestedPlayer.getDisplayName()
                 );
 
@@ -107,7 +107,7 @@ public class ViewCommand {
                 return;
             } else {
                 player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inv, player1) ->
-                        new TrinketScreenHandler(syncId, player.inventory, requestedPlayer),
+                        new TrinketScreenHandler(syncId, player, requestedPlayer),
                         requestedPlayer.getDisplayName()
                 ));
             }

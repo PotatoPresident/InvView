@@ -20,14 +20,15 @@ import java.util.List;
 public class TrinketScreenHandler extends ScreenHandler {
     private final TrinketComponent trinketComponent;
     private final ServerPlayerEntity viewedPlayer;
-    private final PlayerInventory playerInventory;
+    private final ServerPlayerEntity player;
     private final List<ScreenHandlerListener> listeners = Lists.newArrayList();
 
-    public TrinketScreenHandler(int syncId, PlayerInventory playerInventory, ServerPlayerEntity viewedPlayer) {
+    public TrinketScreenHandler(int syncId, ServerPlayerEntity player, ServerPlayerEntity viewedPlayer) {
         super(ScreenHandlerType.GENERIC_9X2, syncId);
-        this.playerInventory = playerInventory;
+        PlayerInventory playerInventory = player.inventory;
         trinketComponent = TrinketsApi.getTrinketComponent(viewedPlayer);
         this.viewedPlayer = viewedPlayer;
+        this.player = player;
 
         int rows = 2;
         int i = (rows - 4) * 18;
@@ -56,55 +57,30 @@ public class TrinketScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public void addListener(ScreenHandlerListener listener) {
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-            listener.onHandlerRegistered(this, getStacks());
-            sendContentUpdates();
-        }
-    }
-
-    @Override
-    public void sendContentUpdates() {
-        for (int j = 0; j < slots.size(); ++j) {
-            ItemStack itemStack = slots.get(j).getStack();
-
-            for (ScreenHandlerListener screenHandlerListener: listeners) {
-                screenHandlerListener.onSlotUpdate(this, j, itemStack.copy());
-            }
-        }
-    }
-
-    @Override
     public ItemStack transferSlot(PlayerEntity player, int index) {
-        if (!(player instanceof ServerPlayerEntity))
-            return ItemStack.EMPTY;
-
-        this.sendContentUpdates();
-        return playerInventory.getCursorStack();
+        this.resendInventory();
+        return ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack onSlotClick(int i, int j, SlotActionType actionType, PlayerEntity playerEntity) {
-        if (actionType == SlotActionType.QUICK_MOVE) return playerInventory.getCursorStack();
-
-        sendContentUpdates();
-
-        if (i < 0)
-            return ItemStack.EMPTY;
-
         if (i < TrinketSlots.getSlotCount()) {
             return super.onSlotClick(i, j, actionType, playerEntity);
         } else if (i > 17) {
             return super.onSlotClick(i, j, actionType, playerEntity);
         } else {
-            return playerInventory.getCursorStack();
+            resendInventory();
+            return ItemStack.EMPTY;
         }
     }
 
     @Override
     public void close(PlayerEntity player) {
-        InvView.SavePlayerData(viewedPlayer);
+        InvView.SavePlayerData(this.viewedPlayer);
         super.close(player);
+    }
+
+    private void resendInventory() {
+        player.onHandlerRegistered(this, this.getStacks());
     }
 }
