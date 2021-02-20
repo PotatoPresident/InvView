@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerListener;
 import net.minecraft.screen.ScreenHandlerType;
@@ -16,14 +16,15 @@ import us.potatoboy.invview.InvView;
 import java.util.List;
 
 public class PlayerInventoryScreenHandler extends ScreenHandler {
+    private final ServerPlayerEntity player;
     private final PlayerInventory viewInventory;
-    private final PlayerInventory playerInventory;
     private final List<ScreenHandlerListener> listeners = Lists.newArrayList();
 
-    public PlayerInventoryScreenHandler(int syncId, PlayerInventory playerInventory, PlayerInventory viewInventory) {
+    public PlayerInventoryScreenHandler(int syncId, ServerPlayerEntity player, PlayerInventory viewInventory) {
         super(ScreenHandlerType.GENERIC_9X5, syncId);
+        this.player = player;
         this.viewInventory = viewInventory;
-        this.playerInventory = playerInventory;
+        PlayerInventory playerInventory = player.inventory;
 
         int rows = 5;
         int i = (rows - 4) * 18;
@@ -52,45 +53,18 @@ public class PlayerInventoryScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public void addListener(ScreenHandlerListener listener) {
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-            listener.onHandlerRegistered(this, getStacks());
-            sendContentUpdates();
-        }
-    }
-
-    @Override
-    public void sendContentUpdates() {
-        for (int j = 0; j < slots.size(); ++j) {
-            ItemStack itemStack = slots.get(j).getStack();
-
-            for (ScreenHandlerListener screenHandlerListener: listeners) {
-                screenHandlerListener.onSlotUpdate(this, j, itemStack.copy());
-            }
-        }
-    }
-
-    @Override
     public ItemStack transferSlot(PlayerEntity player, int index) {
-        if (!(player instanceof ServerPlayerEntity))
-            return ItemStack.EMPTY;
-
-        this.sendContentUpdates();
-        return playerInventory.getCursorStack();
+        this.resendInventory();
+        return new ItemStack(Items.OAK_PLANKS);
     }
 
     @Override
     public ItemStack onSlotClick(int i, int j, SlotActionType actionType, PlayerEntity playerEntity) {
-        if (i < 0)
-            return ItemStack.EMPTY;
-
         if (i > 40 && i < 45) {
-            sendContentUpdates();
-            return playerInventory.getCursorStack();
+            resendInventory();
+            return ItemStack.EMPTY;
         }
         
-        sendContentUpdates();
         return super.onSlotClick(i, j, actionType, playerEntity);
     }
 
@@ -98,5 +72,9 @@ public class PlayerInventoryScreenHandler extends ScreenHandler {
     public void close(PlayerEntity player) {
         InvView.SavePlayerData((ServerPlayerEntity) viewInventory.player);
         super.close(player);
+    }
+
+    private void resendInventory() {
+        player.onHandlerRegistered(this, this.getStacks());
     }
 }
