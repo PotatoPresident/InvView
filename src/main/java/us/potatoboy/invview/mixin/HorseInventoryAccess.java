@@ -9,5 +9,6 @@ import sun.java2d.pipe.SpanShapeRenderer;
 
 @Mixin(HorseBaseEntity.class)
 public interface HorseInventoryAccess {
-    @Accessor("items") SimpleInventory getItems();
+    @Accessor("items")
+    SimpleInventory getItems();
 }

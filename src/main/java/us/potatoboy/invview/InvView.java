@@ -23,11 +23,13 @@ public class InvView implements ModInitializer {
     private static MinecraftServer minecraftServer;
     public static boolean isTrinkets = false;
     public static boolean isLuckPerms = false;
+    public static boolean isOrigins = false;
 
     @Override
     public void onInitialize() {
         isTrinkets = FabricLoader.getInstance().isModLoaded("trinkets");
         isLuckPerms = FabricLoader.getInstance().isModLoaded("luckperms");
+        isOrigins = FabricLoader.getInstance().isModLoaded("origins");
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
 
@@ -57,23 +59,26 @@ public class InvView implements ModInitializer {
                             .executes(ViewCommand::trinkets))
                     .build();
 
-            /*
+            LiteralCommandNode<ServerCommandSource> originNode = CommandManager
+                    .literal("shulk_origin")
+                    .requires(Permissions.require("invview.command.shulk_origin", 2))
+                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
+                            .executes(ViewCommand::shulkOrigin))
+                    .build();
+
             LiteralCommandNode<ServerCommandSource> mountNode = CommandManager
                     .literal("mountInv")
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
                             .executes(ViewCommand::mountInv))
                     .build();
 
-             */
-
             dispatcher.getRoot().addChild(viewNode);
             viewNode.addChild(invNode);
             viewNode.addChild(echestNode);
-            if (isTrinkets) {
-                viewNode.addChild(trinketNode);
-            }
+            if (isTrinkets) viewNode.addChild(trinketNode);
+            if (isOrigins) viewNode.addChild(originNode);
 
-            //viewNode.addChild(mountNode);
+            viewNode.addChild(mountNode);
         });
 
         ServerLifecycleEvents.SERVER_STARTING.register(this::onLogicalServerStarting);

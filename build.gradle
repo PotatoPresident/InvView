@@ -12,6 +12,16 @@ repositories {
         url = "https://maven.abusedmaster.xyz/"
     }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven {
+        name = "AdrianTodt's Maven"
+        url = "https://dl.bintray.com/adriantodt/maven"
+    }
+    maven {
+        url "https://maven.jamieswhiteshirt.com/libs-release/"
+    }
+    maven {
+        url "https://maven.shedaniel.me/"
+    }
     mavenCentral()
 }
 
@@ -34,7 +44,14 @@ dependencies {
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
 
-    modImplementation "com.github.emilyploszaj:trinkets:${project.trinkets_version}"
+    modImplementation("com.github.emilyploszaj:trinkets:${project.trinkets_version}") {
+        exclude(group: "io.github.onyxstudios.Cardinal-Components-API")
+    }
+
+    modImplementation("com.github.apace100:origins-fabric:${project.origins_version}")
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 
     modImplementation "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
     include "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"

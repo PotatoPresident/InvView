@@ -9,9 +9,4 @@ public class MountScreenHandler extends HorseScreenHandler {
     public MountScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {
         super(syncId, playerInventory, inventory, null);
     }
-
-    @Override
-    public boolean canUse(PlayerEntity player) {
-        return true;
-    }
 }
