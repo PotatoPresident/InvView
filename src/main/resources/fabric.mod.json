@@ -35,6 +35,5 @@
     "fabricloader": ">=0.7.2",
     "fabric": "*",
     "minecraft": ">=1.16.2"
-  },
-  "accessWidener": "invview.accesswidener"
+  }
 }

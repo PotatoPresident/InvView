@@ -91,10 +91,6 @@ jar {
     from "LICENSE"
 }
 
-loom {
-    accessWidener "src/main/resources/invview.accesswidener"
-}
-
 // configure the maven publication
 publishing {
     publications {

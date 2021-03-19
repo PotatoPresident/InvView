@@ -1,4 +1,0 @@
-accessWidener	v1  named
-accessible method net/minecraft/server/network/ServerPlayerEntity incrementScreenHandlerSyncId ()V
-accessible field net/minecraft/server/network/ServerPlayerEntity screenHandlerSyncId I
-accessible field net/minecraft/entity/passive/HorseBaseEntity items Lnet/minecraft/inventory/SimpleInventory;
