@@ -66,19 +66,11 @@ public class InvView implements ModInitializer {
                             .executes(ViewCommand::shulkOrigin))
                     .build();
 
-            LiteralCommandNode<ServerCommandSource> mountNode = CommandManager
-                    .literal("mountInv")
-                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
-                            .executes(ViewCommand::mountInv))
-                    .build();
-
             dispatcher.getRoot().addChild(viewNode);
             viewNode.addChild(invNode);
             viewNode.addChild(echestNode);
             if (isTrinkets) viewNode.addChild(trinketNode);
             if (isOrigins) viewNode.addChild(originNode);
-
-            viewNode.addChild(mountNode);
         });
 
         ServerLifecycleEvents.SERVER_STARTING.register(this::onLogicalServerStarting);

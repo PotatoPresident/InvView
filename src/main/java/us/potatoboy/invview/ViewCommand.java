@@ -24,9 +24,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.Identifier;
 import us.potatoboy.invview.gui.*;
-import us.potatoboy.invview.mixin.HorseInventoryAccess;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -69,38 +67,6 @@ public class ViewCommand {
             }
         });
 
-        return 1;
-    }
-
-    public static int mountInv(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerPlayerEntity player = context.getSource().getPlayer();
-        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
-
-        if (requestedPlayer.getVehicle() != null && requestedPlayer.getVehicle() instanceof HorseBaseEntity) {
-            HorseBaseEntity mount = (HorseBaseEntity) requestedPlayer.getVehicle();
-
-            //mount.openInventory(player);
-            SimpleInventory inventory = mount.items;
-            //player.openHorseInventory(mount, inventory);
-
-            if (player.currentScreenHandler != player.playerScreenHandler) {
-                player.closeHandledScreen();
-            }
-
-            player.networkHandler.sendPacket(new EntitySpawnS2CPacket(mount));
-
-            player.incrementScreenHandlerSyncId();
-            player.networkHandler.sendPacket(new OpenHorseScreenS2CPacket(player.screenHandlerSyncId, inventory.size(), mount.getEntityId()));
-            player.currentScreenHandler = new MountScreenHandler(player.screenHandlerSyncId, player.inventory, inventory);
-            player.currentScreenHandler.addListener(player);
-
-            /*
-            player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, inv, player1) ->
-                new MountScreenHandler(player.currentScreenHandler.syncId, player.inventory, inventory),
-                requestedPlayer.getDisplayName()
-            ));
-             */
-        }
         return 1;
     }
 

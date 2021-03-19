@@ -4,7 +4,6 @@
   "package": "us.potatoboy.invview.mixin",
   "compatibilityLevel": "JAVA_8",
   "server": [
-    "HorseInventoryAccess"
   ],
   "injectors": {
     "defaultRequire": 1
