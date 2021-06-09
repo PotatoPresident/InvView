@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.GameProfileArgumentType;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
@@ -57,14 +57,6 @@ public class InvView implements ModInitializer {
                             .executes(ViewCommand::trinkets))
                     .build();
 
-            /*
-            LiteralCommandNode<ServerCommandSource> mountNode = CommandManager
-                    .literal("mountInv")
-                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
-                            .executes(ViewCommand::mountInv))
-                    .build();
-
-             */
 
             dispatcher.getRoot().addChild(viewNode);
             viewNode.addChild(invNode);
@@ -72,8 +64,6 @@ public class InvView implements ModInitializer {
             if (isTrinkets) {
                 viewNode.addChild(trinketNode);
             }
-
-            //viewNode.addChild(mountNode);
         });
 
         ServerLifecycleEvents.SERVER_STARTING.register(this::onLogicalServerStarting);
@@ -87,10 +77,10 @@ public class InvView implements ModInitializer {
         return minecraftServer;
     }
 
-    public static void SavePlayerData(ServerPlayerEntity player) {
+    public static void savePlayerData(ServerPlayerEntity player) {
         File playerDataDir = minecraftServer.getSavePath(WorldSavePath.PLAYERDATA).toFile();
         try {
-            CompoundTag compoundTag = player.toTag(new CompoundTag());
+            NbtCompound compoundTag = player.writeNbt(new NbtCompound());
             File file = File.createTempFile(player.getUuidAsString() + "-", ".dat", playerDataDir);
             NbtIo.writeCompressed(compoundTag, file);
             File file2 = new File(playerDataDir, player.getUuidAsString() + ".dat");

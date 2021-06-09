@@ -1,16 +1,18 @@
 plugins {
-    id 'fabric-loom' version '0.5-SNAPSHOT'
+    id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'maven-publish'
 }
 
 repositories {
     maven {
-        url = "https://jitpack.io"
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
     }
     maven {
-        name = "NerdHubMC"
-        url = "https://maven.abusedmaster.xyz/"
+        name = "Ladysnake Libs"
+        url = "https://ladysnake.jfrog.io/artifactory/mods"
     }
+    maven { url 'https://maven.nucleoid.xyz' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     mavenCentral()
 }
@@ -33,8 +35,9 @@ dependencies {
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
+    modImplementation include("eu.pb4:sgui:${project.sgui_version}")
 
-    modImplementation "com.github.emilyploszaj:trinkets:${project.trinkets_version}"
+    modImplementation "dev.emi:trinkets:${project.trinkets_version}"
 
     modImplementation "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
     include "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
@@ -44,14 +47,8 @@ dependencies {
 
 processResources {
     inputs.property "version", project.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
+    filesMatching("fabric.mod.json") {
         expand "version": project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
     }
 }
 
