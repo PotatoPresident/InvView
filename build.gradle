@@ -14,6 +14,10 @@ repositories {
     }
     maven { url 'https://maven.nucleoid.xyz' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven {
+        name = "Basique's Maven"
+        url = 'https://porez.ml/maven'
+    }
     mavenCentral()
 }
 
@@ -43,6 +47,8 @@ dependencies {
     include "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
 
     compileOnly 'net.luckperms:api:5.2'
+
+    modImplementation include("me.basiqueevangelist:ne-v-seti:${project.nevseti_version}")
 }
 
 processResources {
