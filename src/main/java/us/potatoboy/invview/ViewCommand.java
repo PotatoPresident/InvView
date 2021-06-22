@@ -3,6 +3,7 @@ package us.potatoboy.invview;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.Dynamic;
 import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketInventory;
 import dev.emi.trinkets.api.TrinketsApi;
@@ -12,12 +13,16 @@ import net.luckperms.api.cacheddata.CachedPermissionData;
 import net.luckperms.api.util.Tristate;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.inventory.EnderChestInventory;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
+import net.minecraft.world.dimension.DimensionType;
 import us.potatoboy.invview.gui.SavingPlayerDataGui;
 
 import java.util.Map;
@@ -104,7 +109,14 @@ public class ViewCommand {
 
         if (requestedPlayer == null) {
             requestedPlayer = minecraftServer.getPlayerManager().createPlayer(requestedProfile);
-            minecraftServer.getPlayerManager().loadPlayerData(requestedPlayer);
+            NbtCompound compound = minecraftServer.getPlayerManager().loadPlayerData(requestedPlayer);
+            ServerWorld world = minecraftServer.getWorld(
+                    DimensionType.worldFromDimensionNbt(new Dynamic(NbtOps.INSTANCE, compound.get("Dimension"))).result().get()
+            );
+
+            if (world != null) {
+                requestedPlayer.setWorld(world);
+            }
         }
 
         return requestedPlayer;
