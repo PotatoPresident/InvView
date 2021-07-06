@@ -5,16 +5,13 @@ plugins {
 
 repositories {
     maven {
-        name = "TerraformersMC"
-        url = "https://maven.terraformersmc.com/"
-    }
-    maven {
         name = "Ladysnake Libs"
         url = "https://ladysnake.jfrog.io/artifactory/mods"
     }
     maven { url 'https://maven.nucleoid.xyz' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     mavenCentral()
+    maven { url 'https://api.modrinth.com/maven' }
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -37,7 +34,9 @@ dependencies {
     // You may need to force-disable transitiveness on them.
     modImplementation include("eu.pb4:sgui:${project.sgui_version}")
 
-    modImplementation "dev.emi:trinkets:${project.trinkets_version}"
+    modImplementation "maven.modrinth:trinkets:${project.trinkets_version}"
+    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:3.0.0"
+    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:3.0.0"
 
     modImplementation "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
     include "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
