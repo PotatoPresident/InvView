@@ -8,6 +8,8 @@ import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketInventory;
 import dev.emi.trinkets.api.TrinketsApi;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import io.github.apace100.apoli.component.PowerHolderComponent;
+import io.github.apace100.apoli.power.InventoryPower;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.cacheddata.CachedPermissionData;
 import net.luckperms.api.util.Tristate;
@@ -25,6 +27,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.world.dimension.DimensionType;
 import us.potatoboy.invview.gui.SavingPlayerDataGui;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -97,6 +100,36 @@ public class ViewCommand {
                 }
 
                 gui.open();
+            }
+        });
+
+        return 1;
+    }
+
+    public static int origin(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().getPlayer();
+        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+
+        isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
+            if (isProtected) {
+                context.getSource().sendError(new LiteralText("Requested inventory is protected"));
+            } else {
+                List<InventoryPower> inventories = PowerHolderComponent.getPowers(requestedPlayer, InventoryPower.class);
+                if (inventories.isEmpty()) {
+                    context.getSource().sendError(new LiteralText("Requested player has no inventory power"));
+                } else {
+                    SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
+                    gui.setTitle(requestedPlayer.getDisplayName());
+                    int index = 0;
+                    for (InventoryPower inventory : inventories) {
+                        for (int i = 0; i < inventory.size(); i++) {
+                            gui.setSlotRedirect(index, new Slot(inventory, index, 0, 0));
+                            index += 1;
+                        }
+                    }
+
+                    gui.open();
+                }
             }
         });
 

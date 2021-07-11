@@ -8,10 +8,19 @@ repositories {
         name = "Ladysnake Libs"
         url = "https://ladysnake.jfrog.io/artifactory/mods"
     }
+    maven {
+        url = 'https://maven.cafeteria.dev'
+        content {
+            includeGroup 'net.adriantodt.fabricmc'
+        }
+    }
+    maven { url "https://maven.jamieswhiteshirt.com/libs-release/" }
+    maven { url "https://maven.shedaniel.me/" }
     maven { url 'https://maven.nucleoid.xyz' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     mavenCentral()
     maven { url 'https://api.modrinth.com/maven' }
+    maven { url 'https://jitpack.io' }
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -34,9 +43,13 @@ dependencies {
     // You may need to force-disable transitiveness on them.
     modImplementation include("eu.pb4:sgui:${project.sgui_version}")
 
-    modImplementation "maven.modrinth:trinkets:${project.trinkets_version}"
+    modImplementation "com.github.emilyalexandra:trinkets:main-SNAPSHOT"
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:3.0.0"
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:3.0.0"
+
+    modImplementation ("com.github.apace100:origins-fabric:${project.origins_version}") {
+        exclude group: "com.terraformersmc"
+    }
 
     modImplementation "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
     include "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
