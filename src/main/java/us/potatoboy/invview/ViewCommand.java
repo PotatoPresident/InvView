@@ -43,7 +43,7 @@ public class ViewCommand {
                 context.getSource().sendError(new LiteralText("Requested inventory is protected"));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
-                gui.setTitle(requestedPlayer.getDisplayName());
+                gui.setTitle(requestedPlayer.getName());
                 for (int i = 0; i < player.getInventory().size(); i++) {
                     gui.setSlotRedirect(i, new Slot(requestedPlayer.getInventory(), i, 0, 0));
                 }
@@ -65,7 +65,7 @@ public class ViewCommand {
                 context.getSource().sendError(new LiteralText("Requested inventory is protected"));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X3, player, requestedPlayer);
-                gui.setTitle(requestedPlayer.getDisplayName());
+                gui.setTitle(requestedPlayer.getName());
                 for (int i = 0; i < requestedEchest.size(); i++) {
                     gui.setSlotRedirect(i, new Slot(requestedEchest, i, 0, 0));
                 }
@@ -87,8 +87,7 @@ public class ViewCommand {
                 context.getSource().sendError(new LiteralText("Requested inventory is protected"));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X2, player, requestedPlayer);
-                gui.setTitle(requestedPlayer.getDisplayName());
-
+                gui.setTitle(requestedPlayer.getName());
                 int index = 0;
                 for (Map<String, TrinketInventory> group : requestedComponent.getInventory().values()) {
                     for (TrinketInventory inventory : group.values()) {
@@ -119,7 +118,7 @@ public class ViewCommand {
                     context.getSource().sendError(new LiteralText("Requested player has no inventory power"));
                 } else {
                     SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
-                    gui.setTitle(requestedPlayer.getDisplayName());
+                    gui.setTitle(requestedPlayer.getName());
                     int index = 0;
                     for (InventoryPower inventory : inventories) {
                         for (int i = 0; i < inventory.size(); i++) {
@@ -143,12 +142,14 @@ public class ViewCommand {
         if (requestedPlayer == null) {
             requestedPlayer = minecraftServer.getPlayerManager().createPlayer(requestedProfile);
             NbtCompound compound = minecraftServer.getPlayerManager().loadPlayerData(requestedPlayer);
-            ServerWorld world = minecraftServer.getWorld(
-                    DimensionType.worldFromDimensionNbt(new Dynamic(NbtOps.INSTANCE, compound.get("Dimension"))).result().get()
-            );
+            if (compound != null) {
+                ServerWorld world = minecraftServer.getWorld(
+                        DimensionType.worldFromDimensionNbt(new Dynamic<>(NbtOps.INSTANCE, compound.get("Dimension"))).result().get()
+                );
 
-            if (world != null) {
-                requestedPlayer.setWorld(world);
+                if (world != null) {
+                    requestedPlayer.setWorld(world);
+                }
             }
         }
 
