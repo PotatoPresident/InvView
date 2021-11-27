@@ -31,7 +31,6 @@
   "depends": {
     "fabricloader": ">=0.7.2",
     "fabric": "*",
-    "minecraft": ">=1.17.1"
-  },
-  "accessWidener": "invview.accesswidener"
+    "minecraft": "1.18.x"
+  }
 }

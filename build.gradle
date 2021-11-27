@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.8-SNAPSHOT'
+    id 'fabric-loom' version '0.10.+'
     id 'maven-publish'
 }
 
@@ -23,8 +23,8 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version + "-" + project.minecraft_version + "+"
@@ -43,6 +43,7 @@ dependencies {
     // You may need to force-disable transitiveness on them.
     modImplementation include("eu.pb4:sgui:${project.sgui_version}")
 
+    /*
     modImplementation "com.github.emilyalexandra:trinkets:main-SNAPSHOT"
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:3.0.0"
     modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:3.0.0"
@@ -50,11 +51,12 @@ dependencies {
     modImplementation ("com.github.apace100:origins-fabric:${project.origins_version}") {
         exclude group: "com.terraformersmc"
     }
+     */
 
     modImplementation "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
     include "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
 
-    compileOnly 'net.luckperms:api:5.2'
+    compileOnly 'net.luckperms:api:5.3'
 }
 
 processResources {
@@ -81,10 +83,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
     from "LICENSE"
-}
-
-loom {
-    accessWidener "src/main/resources/invview.accesswidener"
 }
 
 // configure the maven publication
