@@ -52,7 +52,7 @@ public class InvView implements ModInitializer {
                             .executes(ViewCommand::eChest))
                     .build();
 
-            /*
+
             LiteralCommandNode<ServerCommandSource> trinketNode = CommandManager
                     .literal("trinket")
                     .requires(Permissions.require("invview.command.trinket", 2))
@@ -66,20 +66,18 @@ public class InvView implements ModInitializer {
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
                             .executes(ViewCommand::origin))
                     .build();
-             */
 
 
             dispatcher.getRoot().addChild(viewNode);
             viewNode.addChild(invNode);
             viewNode.addChild(echestNode);
-            /*
+
             if (isTrinkets) {
                 viewNode.addChild(trinketNode);
             }
             if (isOrigins) {
                 viewNode.addChild(originNode);
             }
-             */
         });
 
         ServerLifecycleEvents.SERVER_STARTING.register(this::onLogicalServerStarting);
