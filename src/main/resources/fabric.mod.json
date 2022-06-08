@@ -31,6 +31,6 @@
   "depends": {
     "fabricloader": ">=0.7.2",
     "fabric": "*",
-    "minecraft": "1.18.x"
+    "minecraft": "1.19"
   }
 }

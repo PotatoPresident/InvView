@@ -3,7 +3,7 @@ package us.potatoboy.invview;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.GameProfileArgumentType;
@@ -31,7 +31,7 @@ public class InvView implements ModInitializer {
         isLuckPerms = FabricLoader.getInstance().isModLoaded("luckperms");
         isOrigins = FabricLoader.getInstance().isModLoaded("origins");
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 
             LiteralCommandNode<ServerCommandSource> viewNode = CommandManager
                     .literal("view")
@@ -52,7 +52,6 @@ public class InvView implements ModInitializer {
                             .executes(ViewCommand::eChest))
                     .build();
 
-
             LiteralCommandNode<ServerCommandSource> trinketNode = CommandManager
                     .literal("trinket")
                     .requires(Permissions.require("invview.command.trinket", 2))
@@ -66,7 +65,6 @@ public class InvView implements ModInitializer {
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
                             .executes(ViewCommand::origin))
                     .build();
-
 
             dispatcher.getRoot().addChild(viewNode);
             viewNode.addChild(invNode);

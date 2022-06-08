@@ -23,7 +23,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.world.dimension.DimensionType;
 import us.potatoboy.invview.gui.SavingPlayerDataGui;
 
@@ -40,7 +40,7 @@ public class ViewCommand {
 
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
-                context.getSource().sendError(new LiteralText("Requested inventory is protected"));
+                context.getSource().sendError(Text.literal("Requested inventory is protected"));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
@@ -62,7 +62,7 @@ public class ViewCommand {
 
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
-                context.getSource().sendError(new LiteralText("Requested inventory is protected"));
+                context.getSource().sendError(Text.literal("Requested inventory is protected"));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X3, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
@@ -84,7 +84,7 @@ public class ViewCommand {
 
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
-                context.getSource().sendError(new LiteralText("Requested inventory is protected"));
+                context.getSource().sendError(Text.literal("Requested inventory is protected"));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X2, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
@@ -111,11 +111,12 @@ public class ViewCommand {
 
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
-                context.getSource().sendError(new LiteralText("Requested inventory is protected"));
+                context.getSource().sendError(Text.literal("Requested inventory is protected"));
             } else {
-                List<InventoryPower> inventories = PowerHolderComponent.getPowers(requestedPlayer, InventoryPower.class);
+                List<InventoryPower> inventories = PowerHolderComponent.getPowers(requestedPlayer,
+                        InventoryPower.class);
                 if (inventories.isEmpty()) {
-                    context.getSource().sendError(new LiteralText("Requested player has no inventory power"));
+                    context.getSource().sendError(Text.literal("Requested player has no inventory power"));
                 } else {
                     SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
                     gui.setTitle(requestedPlayer.getName());
@@ -135,17 +136,18 @@ public class ViewCommand {
         return 1;
     }
 
-    private static ServerPlayerEntity getRequestedPlayer(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    private static ServerPlayerEntity getRequestedPlayer(CommandContext<ServerCommandSource> context)
+            throws CommandSyntaxException {
         GameProfile requestedProfile = GameProfileArgumentType.getProfileArgument(context, "target").iterator().next();
         ServerPlayerEntity requestedPlayer = minecraftServer.getPlayerManager().getPlayer(requestedProfile.getName());
 
         if (requestedPlayer == null) {
-            requestedPlayer = minecraftServer.getPlayerManager().createPlayer(requestedProfile);
+            requestedPlayer = minecraftServer.getPlayerManager().createPlayer(requestedProfile, null);
             NbtCompound compound = minecraftServer.getPlayerManager().loadPlayerData(requestedPlayer);
             if (compound != null) {
                 ServerWorld world = minecraftServer.getWorld(
-                        DimensionType.worldFromDimensionNbt(new Dynamic<>(NbtOps.INSTANCE, compound.get("Dimension"))).result().get()
-                );
+                        DimensionType.worldFromDimensionNbt(new Dynamic<>(NbtOps.INSTANCE, compound.get("Dimension")))
+                                .result().get());
 
                 if (world != null) {
                     requestedPlayer.setWorld(world);
@@ -157,11 +159,13 @@ public class ViewCommand {
     }
 
     private static CompletableFuture<Boolean> isProtected(ServerPlayerEntity playerEntity) {
-        if (!InvView.isLuckPerms) return CompletableFuture.completedFuture(false);
+        if (!InvView.isLuckPerms)
+            return CompletableFuture.completedFuture(false);
 
         return LuckPermsProvider.get().getUserManager().loadUser(playerEntity.getUuid())
                 .thenApplyAsync(user -> {
-                    CachedPermissionData permissionData = user.getCachedData().getPermissionData(user.getQueryOptions());
+                    CachedPermissionData permissionData = user.getCachedData()
+                            .getPermissionData(user.getQueryOptions());
                     Tristate tristate = permissionData.checkPermission("invview.protected");
                     if (tristate.equals(Tristate.UNDEFINED)) {
                         return false;
