@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.10.+'
+    id 'fabric-loom' version '0.12.+'
     id 'maven-publish'
 }
 
@@ -48,7 +48,7 @@ dependencies {
     modImplementation include("eu.pb4:sgui:${project.sgui_version}")
 
     modImplementation "dev.emi:trinkets:${project.trinkets_version}"
-    modImplementation "com.github.apace100:origins-fabric:${project.origins_version}"
+    modImplementation "com.github.apace100:apoli:${project.apoli_version}"
     /*
 modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:3.0.0"
 modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:3.0.0"
