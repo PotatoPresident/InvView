@@ -41,7 +41,7 @@ public class ViewCommand {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
 
-        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify");
+        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
 
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
@@ -65,7 +65,7 @@ public class ViewCommand {
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
         EnderChestInventory requestedEchest = requestedPlayer.getEnderChestInventory();
 
-        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify");
+        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
 
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
@@ -89,7 +89,7 @@ public class ViewCommand {
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
         TrinketComponent requestedComponent = TrinketsApi.getTrinketComponent(requestedPlayer).get();
 
-        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify");
+        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
 
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
@@ -118,7 +118,7 @@ public class ViewCommand {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
 
-        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify");
+        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
 
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
