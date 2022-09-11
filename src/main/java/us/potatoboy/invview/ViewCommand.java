@@ -10,6 +10,7 @@ import dev.emi.trinkets.api.TrinketsApi;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.InventoryPower;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.cacheddata.CachedPermissionData;
 import net.luckperms.api.util.Tristate;
@@ -26,10 +27,12 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.world.dimension.DimensionType;
 import us.potatoboy.invview.gui.SavingPlayerDataGui;
+import us.potatoboy.invview.gui.UnmodifiableSlot;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
 
 public class ViewCommand {
     private static MinecraftServer minecraftServer = InvView.getMinecraftServer();
@@ -38,14 +41,16 @@ public class ViewCommand {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
 
+        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
+
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
                 context.getSource().sendError(Text.literal("Requested inventory is protected"));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
-                for (int i = 0; i < player.getInventory().size(); i++) {
-                    gui.setSlotRedirect(i, new Slot(requestedPlayer.getInventory(), i, 0, 0));
+                for (int i = 0; i < requestedPlayer.getInventory().size(); i++) {
+                    gui.setSlotRedirect(i, canModify ? new Slot(requestedPlayer.getInventory(), i, 0, 0) : new UnmodifiableSlot(requestedPlayer.getInventory(), i));
                 }
 
                 gui.open();
@@ -60,6 +65,8 @@ public class ViewCommand {
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
         EnderChestInventory requestedEchest = requestedPlayer.getEnderChestInventory();
 
+        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
+
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
                 context.getSource().sendError(Text.literal("Requested inventory is protected"));
@@ -67,7 +74,7 @@ public class ViewCommand {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X3, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
                 for (int i = 0; i < requestedEchest.size(); i++) {
-                    gui.setSlotRedirect(i, new Slot(requestedEchest, i, 0, 0));
+                    gui.setSlotRedirect(i, canModify ? new Slot(requestedEchest, i, 0, 0) : new UnmodifiableSlot(requestedEchest, i));
                 }
 
                 gui.open();
@@ -82,6 +89,8 @@ public class ViewCommand {
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
         TrinketComponent requestedComponent = TrinketsApi.getTrinketComponent(requestedPlayer).get();
 
+        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
+
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
                 context.getSource().sendError(Text.literal("Requested inventory is protected"));
@@ -92,7 +101,7 @@ public class ViewCommand {
                 for (Map<String, TrinketInventory> group : requestedComponent.getInventory().values()) {
                     for (TrinketInventory inventory : group.values()) {
                         for (int i = 0; i < inventory.size(); i++) {
-                            gui.setSlotRedirect(index, new Slot(inventory, i, 0, 0));
+                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
                             index += 1;
                         }
                     }
@@ -109,6 +118,8 @@ public class ViewCommand {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
 
+        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
+
         isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
             if (isProtected) {
                 context.getSource().sendError(Text.literal("Requested inventory is protected"));
@@ -123,7 +134,7 @@ public class ViewCommand {
                     int index = 0;
                     for (InventoryPower inventory : inventories) {
                         for (int i = 0; i < inventory.size(); i++) {
-                            gui.setSlotRedirect(index, new Slot(inventory, index, 0, 0));
+                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
                             index += 1;
                         }
                     }
