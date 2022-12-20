@@ -8,12 +8,7 @@ import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketInventory;
 import dev.emi.trinkets.api.TrinketsApi;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import io.github.apace100.apoli.component.PowerHolderComponent;
-import io.github.apace100.apoli.power.InventoryPower;
 import me.lucko.fabric.api.permissions.v0.Permissions;
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.cacheddata.CachedPermissionData;
-import net.luckperms.api.util.Tristate;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.nbt.NbtCompound;
@@ -29,23 +24,24 @@ import net.minecraft.world.dimension.DimensionType;
 import us.potatoboy.invview.gui.SavingPlayerDataGui;
 import us.potatoboy.invview.gui.UnmodifiableSlot;
 
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-
 
 public class ViewCommand {
     private static MinecraftServer minecraftServer = InvView.getMinecraftServer();
+
+    private static final String permProtected = "invview.protected";
+    private static final String permModify = "invview.can_modify";
+    private static final String msgProtected = "Requested inventory is protected";
 
     public static int inv(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
 
-        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
+        boolean canModify = Permissions.check(context.getSource(), permModify, true);
 
-        isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
+        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
             if (isProtected) {
-                context.getSource().sendError(Text.literal("Requested inventory is protected"));
+                context.getSource().sendError(Text.literal(msgProtected));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
@@ -65,11 +61,11 @@ public class ViewCommand {
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
         EnderChestInventory requestedEchest = requestedPlayer.getEnderChestInventory();
 
-        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
+        boolean canModify = Permissions.check(context.getSource(), permModify, true);
 
-        isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
+        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
             if (isProtected) {
-                context.getSource().sendError(Text.literal("Requested inventory is protected"));
+                context.getSource().sendError(Text.literal(msgProtected));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X3, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
@@ -89,11 +85,11 @@ public class ViewCommand {
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
         TrinketComponent requestedComponent = TrinketsApi.getTrinketComponent(requestedPlayer).get();
 
-        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
+        boolean canModify = Permissions.check(context.getSource(), permModify, true);
 
-        isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
+        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
             if (isProtected) {
-                context.getSource().sendError(Text.literal("Requested inventory is protected"));
+                context.getSource().sendError(Text.literal(msgProtected));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X2, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
@@ -115,34 +111,34 @@ public class ViewCommand {
     }
 
     public static int origin(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerPlayerEntity player = context.getSource().getPlayer();
-        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
-
-        boolean canModify = Permissions.check(context.getSource(), "invview.can_modify", true);
-
-        isProtected(requestedPlayer).thenAcceptAsync(isProtected -> {
-            if (isProtected) {
-                context.getSource().sendError(Text.literal("Requested inventory is protected"));
-            } else {
-                List<InventoryPower> inventories = PowerHolderComponent.getPowers(requestedPlayer,
-                        InventoryPower.class);
-                if (inventories.isEmpty()) {
-                    context.getSource().sendError(Text.literal("Requested player has no inventory power"));
-                } else {
-                    SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
-                    gui.setTitle(requestedPlayer.getName());
-                    int index = 0;
-                    for (InventoryPower inventory : inventories) {
-                        for (int i = 0; i < inventory.size(); i++) {
-                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
-                            index += 1;
-                        }
-                    }
-
-                    gui.open();
-                }
-            }
-        });
+//        ServerPlayerEntity player = context.getSource().getPlayer();
+//        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+//
+//        boolean canModify = Permissions.check(context.getSource(), permModify, true);
+//
+//        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
+//            if (isProtected) {
+//                context.getSource().sendError(Text.literal(msgProtected));
+//            } else {
+//                List<InventoryPower> inventories = PowerHolderComponent.getPowers(requestedPlayer,
+//                        InventoryPower.class);
+//                if (inventories.isEmpty()) {
+//                    context.getSource().sendError(Text.literal("Requested player has no inventory power"));
+//                } else {
+//                    SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
+//                    gui.setTitle(requestedPlayer.getName());
+//                    int index = 0;
+//                    for (InventoryPower inventory : inventories) {
+//                        for (int i = 0; i < inventory.size(); i++) {
+//                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
+//                            index += 1;
+//                        }
+//                    }
+//
+//                    gui.open();
+//                }
+//            }
+//        });
 
         return 1;
     }
@@ -153,7 +149,7 @@ public class ViewCommand {
         ServerPlayerEntity requestedPlayer = minecraftServer.getPlayerManager().getPlayer(requestedProfile.getName());
 
         if (requestedPlayer == null) {
-            requestedPlayer = minecraftServer.getPlayerManager().createPlayer(requestedProfile, null);
+            requestedPlayer = minecraftServer.getPlayerManager().createPlayer(requestedProfile);
             NbtCompound compound = minecraftServer.getPlayerManager().loadPlayerData(requestedPlayer);
             if (compound != null) {
                 ServerWorld world = minecraftServer.getWorld(
@@ -167,22 +163,5 @@ public class ViewCommand {
         }
 
         return requestedPlayer;
-    }
-
-    private static CompletableFuture<Boolean> isProtected(ServerPlayerEntity playerEntity) {
-        if (!InvView.isLuckPerms)
-            return CompletableFuture.completedFuture(false);
-
-        return LuckPermsProvider.get().getUserManager().loadUser(playerEntity.getUuid())
-                .thenApplyAsync(user -> {
-                    CachedPermissionData permissionData = user.getCachedData()
-                            .getPermissionData(user.getQueryOptions());
-                    Tristate tristate = permissionData.checkPermission("invview.protected");
-                    if (tristate.equals(Tristate.UNDEFINED)) {
-                        return false;
-                    }
-
-                    return tristate.asBoolean();
-                });
     }
 }

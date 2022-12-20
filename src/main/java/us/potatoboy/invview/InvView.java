@@ -74,7 +74,7 @@ public class InvView implements ModInitializer {
                 viewNode.addChild(trinketNode);
             }
             if (isOrigins) {
-                viewNode.addChild(originNode);
+                //viewNode.addChild(originNode);
             }
         });
 
