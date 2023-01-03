@@ -54,6 +54,10 @@ dependencies {
     include "me.lucko:fabric-permissions-api:0.2-SNAPSHOT"
 
     compileOnly 'net.luckperms:api:5.3'
+
+    // Dev Mods - These can be commented/uncommented to test compatibility
+    //modLocalRuntime "maven.modrinth:cloth-config:9.0.94+fabric"
+    //modLocalRuntime "maven.modrinth:expanded-enderchest:1.0.0+1.19.3"
 }
 
 processResources {
