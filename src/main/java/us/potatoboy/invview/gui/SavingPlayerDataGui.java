@@ -4,6 +4,7 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import us.potatoboy.invview.InvView;
+import us.potatoboy.invview.ViewCommand;
 
 public class SavingPlayerDataGui extends SimpleGui {
     private final ServerPlayerEntity savedPlayer;
@@ -20,7 +21,15 @@ public class SavingPlayerDataGui extends SimpleGui {
     }
 
     @Override
+    public void onOpen() {
+        ViewCommand.openedProfiles.add(savedPlayer.getUuid());
+    }
+
+    @Override
     public void onClose() {
+    synchronized (ViewCommand.openedProfiles) {
         InvView.savePlayerData(savedPlayer);
+        ViewCommand.openedProfiles.remove(savedPlayer.getUuid());
+    }
     }
 }
