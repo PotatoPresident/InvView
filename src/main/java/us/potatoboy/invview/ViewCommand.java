@@ -67,7 +67,15 @@ public class ViewCommand {
             if (isProtected) {
                 context.getSource().sendError(Text.literal(msgProtected));
             } else {
-                SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X3, player, requestedPlayer);
+				ScreenHandlerType<?> screenHandlerType = switch (requestedEchest.size()) {
+					case 9 -> ScreenHandlerType.GENERIC_9X1;
+					case 18  -> ScreenHandlerType.GENERIC_9X2;
+					case 36  -> ScreenHandlerType.GENERIC_9X4;
+					case 45  -> ScreenHandlerType.GENERIC_9X5;
+					case 54  -> ScreenHandlerType.GENERIC_9X6;
+					default -> ScreenHandlerType.GENERIC_9X3;
+				};
+                SimpleGui gui = new SavingPlayerDataGui(screenHandlerType, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
                 for (int i = 0; i < requestedEchest.size(); i++) {
                     gui.setSlotRedirect(i, canModify ? new Slot(requestedEchest, i, 0, 0) : new UnmodifiableSlot(requestedEchest, i));
