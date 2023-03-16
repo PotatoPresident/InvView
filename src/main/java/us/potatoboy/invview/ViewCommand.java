@@ -89,32 +89,32 @@ public class ViewCommand {
     }
 
     public static int trinkets(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerPlayerEntity player = context.getSource().getPlayer();
-        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
-        TrinketComponent requestedComponent = TrinketsApi.getTrinketComponent(requestedPlayer).get();
-
-        boolean canModify = Permissions.check(context.getSource(), permModify, true);
-
-        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
-            if (isProtected) {
-                context.getSource().sendError(Text.literal(msgProtected));
-            } else {
-                SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X2, player, requestedPlayer);
-                gui.setTitle(requestedPlayer.getName());
-                int index = 0;
-                for (Map<String, TrinketInventory> group : requestedComponent.getInventory().values()) {
-                    for (TrinketInventory inventory : group.values()) {
-                        for (int i = 0; i < inventory.size(); i++) {
-                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
-                            index += 1;
-                        }
-                    }
-                }
-
-                gui.open();
-            }
-        });
-
+//        ServerPlayerEntity player = context.getSource().getPlayer();
+//        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+//        TrinketComponent requestedComponent = TrinketsApi.getTrinketComponent(requestedPlayer).get();
+//
+//        boolean canModify = Permissions.check(context.getSource(), permModify, true);
+//
+//        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
+//            if (isProtected) {
+//                context.getSource().sendError(Text.literal(msgProtected));
+//            } else {
+//                SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X2, player, requestedPlayer);
+//                gui.setTitle(requestedPlayer.getName());
+//                int index = 0;
+//                for (Map<String, TrinketInventory> group : requestedComponent.getInventory().values()) {
+//                    for (TrinketInventory inventory : group.values()) {
+//                        for (int i = 0; i < inventory.size(); i++) {
+//                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
+//                            index += 1;
+//                        }
+//                    }
+//                }
+//
+//                gui.open();
+//            }
+//        });
+//
         return 1;
     }
 
