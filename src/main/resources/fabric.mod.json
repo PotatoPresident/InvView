@@ -28,9 +28,12 @@
       "us.potatoboy.invview.InvView"
     ]
   },
+  "mixins": [
+    "invview.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.7.2",
     "fabric": "*",
-    "minecraft": "1.19.x"
+    "minecraft": "1.20.x"
   }
 }
