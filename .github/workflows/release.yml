@@ -1,0 +1,40 @@
+name: release
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build artifacts
+        run: ./gradlew clean build
+
+      - name: Upload assets to GitHub, Modrinth and CurseForge
+        uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          modrinth-id: jrDKjZP7
+          modrinth-featured: false
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          
+          curseforge-id: 405159
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          
+          loaders: |
+            fabric
+            quilt
