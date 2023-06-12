@@ -23,6 +23,7 @@ import net.minecraft.text.Text;
 import net.minecraft.world.dimension.DimensionType;
 import us.potatoboy.invview.gui.SavingPlayerDataGui;
 import us.potatoboy.invview.gui.UnmodifiableSlot;
+import us.potatoboy.invview.mixin.EntityAccessor;
 
 import java.util.Map;
 
@@ -165,7 +166,7 @@ public class ViewCommand {
                                 .result().get());
 
                 if (world != null) {
-                    requestedPlayer.setWorld(world);
+                    ((EntityAccessor) requestedPlayer).callSetWorld(world);
                 }
             }
         }
