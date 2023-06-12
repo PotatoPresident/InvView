@@ -25,18 +25,29 @@ import us.potatoboy.invview.gui.SavingPlayerDataGui;
 import us.potatoboy.invview.gui.UnmodifiableSlot;
 import us.potatoboy.invview.mixin.EntityAccessor;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class ViewCommand {
     private static MinecraftServer minecraftServer = InvView.getMinecraftServer();
+    public static final Set<UUID> openedProfiles = new HashSet<>();
 
     private static final String permProtected = "invview.protected";
     private static final String permModify = "invview.can_modify";
     private static final String msgProtected = "Requested inventory is protected";
+    private static final String msgOpened = "Requested inventory is opened";
 
     public static int inv(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    synchronized (openedProfiles) {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+
+        if (openedProfiles.contains(requestedPlayer.getUuid())) {
+            context.getSource().sendError(Text.literal(msgOpened));
+            return 1;
+        }
 
         boolean canModify = Permissions.check(context.getSource(), permModify, true);
 
@@ -56,10 +67,18 @@ public class ViewCommand {
 
         return 1;
     }
+    }
 
     public static int eChest(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    synchronized (openedProfiles) {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+
+        if (openedProfiles.contains(requestedPlayer.getUuid())) {
+            context.getSource().sendError(Text.literal(msgOpened));
+            return 1;
+        }
+
         EnderChestInventory requestedEchest = requestedPlayer.getEnderChestInventory();
 
         boolean canModify = Permissions.check(context.getSource(), permModify, true);
@@ -88,10 +107,18 @@ public class ViewCommand {
 
         return 1;
     }
+    }
 
     public static int trinkets(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    synchronized (openedProfiles) {
         ServerPlayerEntity player = context.getSource().getPlayer();
         ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+
+        if (openedProfiles.contains(requestedPlayer.getUuid())) {
+            context.getSource().sendError(Text.literal(msgOpened));
+            return 1;
+        }
+
         TrinketComponent requestedComponent = TrinketsApi.getTrinketComponent(requestedPlayer).get();
 
         boolean canModify = Permissions.check(context.getSource(), permModify, true);
@@ -117,6 +144,7 @@ public class ViewCommand {
         });
 
         return 1;
+    }
     }
 
     public static int origin(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
