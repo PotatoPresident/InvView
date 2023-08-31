@@ -10,7 +10,7 @@ repositories {
     }
     maven {
         name = "Ladysnake Libs"
-        url = "https://ladysnake.jfrog.io/artifactory/mods"
+        url = 'https://maven.ladysnake.org/releases'
     }
     maven {
         url = 'https://maven.cafeteria.dev'
@@ -48,16 +48,16 @@ dependencies {
     modImplementation include("eu.pb4:sgui:${project.sgui_version}")
 
     modImplementation "dev.emi:trinkets:${project.trinkets_version}"
-    //modImplementation "com.github.apace100:apoli:${project.apoli_version}"
+    modImplementation "com.github.apace100:apoli:${project.apoli_version}"
 
     modImplementation "me.lucko:fabric-permissions-api:0.2-SNAPSHOT"
     include "me.lucko:fabric-permissions-api:0.2-SNAPSHOT"
 
-    compileOnly 'net.luckperms:api:5.3'
-
     // Dev Mods - These can be commented/uncommented to test compatibility
     //modLocalRuntime "maven.modrinth:cloth-config:9.0.94+fabric"
     //modLocalRuntime "maven.modrinth:expanded-enderchest:1.0.0+1.19.3"
+    //modLocalRuntime "maven.modrinth:elytra-slot:6uCj1VmZ"
+    //modLocalRuntime "maven.modrinth:origins:1.10.0"
 }
 
 processResources {

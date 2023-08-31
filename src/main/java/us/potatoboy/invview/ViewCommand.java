@@ -7,10 +7,14 @@ import com.mojang.serialization.Dynamic;
 import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketInventory;
 import dev.emi.trinkets.api.TrinketsApi;
+import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import io.github.apace100.apoli.component.PowerHolderComponent;
+import io.github.apace100.apoli.power.InventoryPower;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.inventory.EnderChestInventory;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.screen.ScreenHandlerType;
@@ -25,6 +29,7 @@ import us.potatoboy.invview.gui.SavingPlayerDataGui;
 import us.potatoboy.invview.gui.UnmodifiableSlot;
 import us.potatoboy.invview.mixin.EntityAccessor;
 
+import java.util.List;
 import java.util.Map;
 
 public class ViewCommand {
@@ -46,6 +51,7 @@ public class ViewCommand {
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
+                addBackground(gui);
                 for (int i = 0; i < requestedPlayer.getInventory().size(); i++) {
                     gui.setSlotRedirect(i, canModify ? new Slot(requestedPlayer.getInventory(), i, 0, 0) : new UnmodifiableSlot(requestedPlayer.getInventory(), i));
                 }
@@ -78,6 +84,7 @@ public class ViewCommand {
 				};
                 SimpleGui gui = new SavingPlayerDataGui(screenHandlerType, player, requestedPlayer);
                 gui.setTitle(requestedPlayer.getName());
+                addBackground(gui);
                 for (int i = 0; i < requestedEchest.size(); i++) {
                     gui.setSlotRedirect(i, canModify ? new Slot(requestedEchest, i, 0, 0) : new UnmodifiableSlot(requestedEchest, i));
                 }
@@ -101,6 +108,7 @@ public class ViewCommand {
                 context.getSource().sendError(Text.literal(msgProtected));
             } else {
                 SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X2, player, requestedPlayer);
+                addBackground(gui);
                 gui.setTitle(requestedPlayer.getName());
                 int index = 0;
                 for (Map<String, TrinketInventory> group : requestedComponent.getInventory().values()) {
@@ -119,35 +127,36 @@ public class ViewCommand {
         return 1;
     }
 
-    public static int origin(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-//        ServerPlayerEntity player = context.getSource().getPlayer();
-//        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
-//
-//        boolean canModify = Permissions.check(context.getSource(), permModify, true);
-//
-//        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
-//            if (isProtected) {
-//                context.getSource().sendError(Text.literal(msgProtected));
-//            } else {
-//                List<InventoryPower> inventories = PowerHolderComponent.getPowers(requestedPlayer,
-//                        InventoryPower.class);
-//                if (inventories.isEmpty()) {
-//                    context.getSource().sendError(Text.literal("Requested player has no inventory power"));
-//                } else {
-//                    SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
-//                    gui.setTitle(requestedPlayer.getName());
-//                    int index = 0;
-//                    for (InventoryPower inventory : inventories) {
-//                        for (int i = 0; i < inventory.size(); i++) {
-//                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
-//                            index += 1;
-//                        }
-//                    }
-//
-//                    gui.open();
-//                }
-//            }
-//        });
+    public static int apoli(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().getPlayer();
+        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+
+        boolean canModify = Permissions.check(context.getSource(), permModify, true);
+
+        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
+            if (isProtected) {
+                context.getSource().sendError(Text.literal(msgProtected));
+            } else {
+                List<InventoryPower> inventories = PowerHolderComponent.getPowers(requestedPlayer,
+                        InventoryPower.class);
+                if (inventories.isEmpty()) {
+                    context.getSource().sendError(Text.literal("Requested player has no inventory power"));
+                } else {
+                    SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
+                    gui.setTitle(requestedPlayer.getName());
+                    addBackground(gui);
+                    int index = 0;
+                    for (InventoryPower inventory : inventories) {
+                        for (int i = 0; i < inventory.size(); i++) {
+                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
+                            index += 1;
+                        }
+                    }
+
+                    gui.open();
+                }
+            }
+        });
 
         return 1;
     }
@@ -172,5 +181,11 @@ public class ViewCommand {
         }
 
         return requestedPlayer;
+    }
+
+    private static void addBackground(SimpleGui gui) {
+        for (int i = 0; i < gui.getSize(); i++) {
+            gui.setSlot(i, new GuiElementBuilder(Items.BARRIER).setName(Text.literal("")).build());
+        }
     }
 }

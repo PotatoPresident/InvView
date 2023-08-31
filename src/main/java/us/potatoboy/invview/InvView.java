@@ -23,13 +23,13 @@ public class InvView implements ModInitializer {
     private static MinecraftServer minecraftServer;
     public static boolean isTrinkets = false;
     public static boolean isLuckPerms = false;
-    public static boolean isOrigins = false;
+    public static boolean isApoli = false;
 
     @Override
     public void onInitialize() {
         isTrinkets = FabricLoader.getInstance().isModLoaded("trinkets");
         isLuckPerms = FabricLoader.getInstance().isModLoaded("luckperms");
-        isOrigins = FabricLoader.getInstance().isModLoaded("origins");
+        isApoli = FabricLoader.getInstance().isModLoaded("apoli");
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 
@@ -59,11 +59,11 @@ public class InvView implements ModInitializer {
                             .executes(ViewCommand::trinkets))
                     .build();
 
-            LiteralCommandNode<ServerCommandSource> originNode = CommandManager
+            LiteralCommandNode<ServerCommandSource> apoliNode = CommandManager
                     .literal("origin-inv")
                     .requires(Permissions.require("invview.command.origin", 2))
                     .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
-                            .executes(ViewCommand::origin))
+                            .executes(ViewCommand::apoli))
                     .build();
 
             dispatcher.getRoot().addChild(viewNode);
@@ -73,8 +73,8 @@ public class InvView implements ModInitializer {
             if (isTrinkets) {
                 viewNode.addChild(trinketNode);
             }
-            if (isOrigins) {
-                //viewNode.addChild(originNode);
+            if (isApoli) {
+                viewNode.addChild(apoliNode);
             }
         });
 
