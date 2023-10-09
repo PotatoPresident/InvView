@@ -25,6 +25,7 @@ repositories {
     mavenCentral()
     maven { url 'https://api.modrinth.com/maven' }
     maven { url 'https://jitpack.io' }
+    maven { url 'https://maven.quiltmc.org/repository/release' }
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
