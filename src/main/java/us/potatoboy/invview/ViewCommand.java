@@ -17,6 +17,7 @@ import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.MinecraftServer;
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ViewCommand {
-    private static MinecraftServer minecraftServer = InvView.getMinecraftServer();
+    private static final MinecraftServer minecraftServer = InvView.getMinecraftServer();
 
     private static final String permProtected = "invview.protected";
     private static final String permModify = "invview.can_modify";
@@ -167,7 +168,7 @@ public class ViewCommand {
         ServerPlayerEntity requestedPlayer = minecraftServer.getPlayerManager().getPlayer(requestedProfile.getName());
 
         if (requestedPlayer == null) {
-            requestedPlayer = minecraftServer.getPlayerManager().createPlayer(requestedProfile);
+            requestedPlayer = minecraftServer.getPlayerManager().createPlayer(requestedProfile, SyncedClientOptions.createDefault());
             NbtCompound compound = minecraftServer.getPlayerManager().loadPlayerData(requestedPlayer);
             if (compound != null) {
                 ServerWorld world = minecraftServer.getWorld(
