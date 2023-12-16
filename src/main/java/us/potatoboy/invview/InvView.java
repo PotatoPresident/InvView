@@ -18,6 +18,7 @@ import net.minecraft.util.WorldSavePath;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
 public class InvView implements ModInitializer {
     private static MinecraftServer minecraftServer;
@@ -94,10 +95,11 @@ public class InvView implements ModInitializer {
         try {
             NbtCompound compoundTag = player.writeNbt(new NbtCompound());
             File file = File.createTempFile(player.getUuidAsString() + "-", ".dat", playerDataDir);
-            NbtIo.writeCompressed(compoundTag, file);
+            final FileOutputStream fos = new FileOutputStream(file);
+            NbtIo.writeCompressed(compoundTag, fos);
             File file2 = new File(playerDataDir, player.getUuidAsString() + ".dat");
             File file3 = new File(playerDataDir, player.getUuidAsString() + ".dat_old");
-            Util.backupAndReplace(file2, file, file3);
+            Util.backupAndReplace(file2.toPath(), file.toPath(), file3.toPath());
         } catch (Exception var6) {
             LogManager.getLogger().warn("Failed to save player data for {}", player.getName().getString());
         }
