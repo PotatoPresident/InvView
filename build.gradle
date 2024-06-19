@@ -28,8 +28,8 @@ repositories {
     maven { url 'https://maven.quiltmc.org/repository/release' }
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version + "-" + project.minecraft_version + "+"
