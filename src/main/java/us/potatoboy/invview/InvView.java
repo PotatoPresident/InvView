@@ -53,29 +53,29 @@ public class InvView implements ModInitializer {
                             .executes(ViewCommand::eChest))
                     .build();
 
-            LiteralCommandNode<ServerCommandSource> trinketNode = CommandManager
-                    .literal("trinket")
-                    .requires(Permissions.require("invview.command.trinket", 2))
-                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
-                            .executes(ViewCommand::trinkets))
-                    .build();
-
-            LiteralCommandNode<ServerCommandSource> apoliNode = CommandManager
-                    .literal("origin-inv")
-                    .requires(Permissions.require("invview.command.origin", 2))
-                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
-                            .executes(ViewCommand::apoli))
-                    .build();
+//            LiteralCommandNode<ServerCommandSource> trinketNode = CommandManager
+//                    .literal("trinket")
+//                    .requires(Permissions.require("invview.command.trinket", 2))
+//                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
+//                            .executes(ViewCommand::trinkets))
+//                    .build();
+//
+//            LiteralCommandNode<ServerCommandSource> apoliNode = CommandManager
+//                    .literal("origin-inv")
+//                    .requires(Permissions.require("invview.command.origin", 2))
+//                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
+//                            .executes(ViewCommand::apoli))
+//                    .build();
 
             dispatcher.getRoot().addChild(viewNode);
             viewNode.addChild(invNode);
             viewNode.addChild(echestNode);
 
             if (isTrinkets) {
-                viewNode.addChild(trinketNode);
+//                viewNode.addChild(trinketNode);
             }
             if (isApoli) {
-                viewNode.addChild(apoliNode);
+//                viewNode.addChild(apoliNode);
             }
         });
 

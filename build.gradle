@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.4.+'
+    id 'fabric-loom' version '1.10.+'
     id 'maven-publish'
 }
 
@@ -28,8 +28,8 @@ repositories {
     maven { url 'https://maven.quiltmc.org/repository/release' }
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version + "-" + project.minecraft_version + "+"
@@ -48,8 +48,8 @@ dependencies {
     // You may need to force-disable transitiveness on them.
     modImplementation include("eu.pb4:sgui:${project.sgui_version}")
 
-    modImplementation "dev.emi:trinkets:${project.trinkets_version}"
-    modImplementation "com.github.apace100:apoli:${project.apoli_version}"
+//    modImplementation "dev.emi:trinkets:${project.trinkets_version}"
+//    modImplementation "com.github.apace100:apoli:${project.apoli_version}"
 
     modImplementation "me.lucko:fabric-permissions-api:0.2-SNAPSHOT"
     include "me.lucko:fabric-permissions-api:0.2-SNAPSHOT"

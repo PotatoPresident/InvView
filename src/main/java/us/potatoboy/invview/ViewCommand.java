@@ -4,13 +4,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
-import dev.emi.trinkets.api.TrinketComponent;
-import dev.emi.trinkets.api.TrinketInventory;
-import dev.emi.trinkets.api.TrinketsApi;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import io.github.apace100.apoli.component.PowerHolderComponent;
-import io.github.apace100.apoli.power.InventoryPower;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.inventory.EnderChestInventory;
@@ -30,8 +25,7 @@ import us.potatoboy.invview.gui.SavingPlayerDataGui;
 import us.potatoboy.invview.gui.UnmodifiableSlot;
 import us.potatoboy.invview.mixin.EntityAccessor;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 public class ViewCommand {
     private static final MinecraftServer minecraftServer = InvView.getMinecraftServer();
@@ -97,70 +91,70 @@ public class ViewCommand {
         return 1;
     }
 
-    public static int trinkets(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerPlayerEntity player = context.getSource().getPlayer();
-        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
-        TrinketComponent requestedComponent = TrinketsApi.getTrinketComponent(requestedPlayer).get();
+//    public static int trinkets(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+//        ServerPlayerEntity player = context.getSource().getPlayer();
+//        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+//        TrinketComponent requestedComponent = TrinketsApi.getTrinketComponent(requestedPlayer).get();
+//
+//        boolean canModify = Permissions.check(context.getSource(), permModify, true);
+//
+//        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
+//            if (isProtected) {
+//                context.getSource().sendError(Text.literal(msgProtected));
+//            } else {
+//                SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X2, player, requestedPlayer);
+//                addBackground(gui);
+//                gui.setTitle(requestedPlayer.getName());
+//                int index = 0;
+//                for (Map<String, TrinketInventory> group : requestedComponent.getInventory().values()) {
+//                    for (TrinketInventory inventory : group.values()) {
+//                        for (int i = 0; i < inventory.size(); i++) {
+//                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
+//                            index += 1;
+//                        }
+//                    }
+//                }
+//
+//                gui.open();
+//            }
+//        });
+//
+//        return 1;
+//    }
 
-        boolean canModify = Permissions.check(context.getSource(), permModify, true);
-
-        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
-            if (isProtected) {
-                context.getSource().sendError(Text.literal(msgProtected));
-            } else {
-                SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X2, player, requestedPlayer);
-                addBackground(gui);
-                gui.setTitle(requestedPlayer.getName());
-                int index = 0;
-                for (Map<String, TrinketInventory> group : requestedComponent.getInventory().values()) {
-                    for (TrinketInventory inventory : group.values()) {
-                        for (int i = 0; i < inventory.size(); i++) {
-                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
-                            index += 1;
-                        }
-                    }
-                }
-
-                gui.open();
-            }
-        });
-
-        return 1;
-    }
-
-    public static int apoli(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        ServerPlayerEntity player = context.getSource().getPlayer();
-        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
-
-        boolean canModify = Permissions.check(context.getSource(), permModify, true);
-
-        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
-            if (isProtected) {
-                context.getSource().sendError(Text.literal(msgProtected));
-            } else {
-                List<InventoryPower> inventories = PowerHolderComponent.getPowers(requestedPlayer,
-                        InventoryPower.class);
-                if (inventories.isEmpty()) {
-                    context.getSource().sendError(Text.literal("Requested player has no inventory power"));
-                } else {
-                    SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
-                    gui.setTitle(requestedPlayer.getName());
-                    addBackground(gui);
-                    int index = 0;
-                    for (InventoryPower inventory : inventories) {
-                        for (int i = 0; i < inventory.size(); i++) {
-                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
-                            index += 1;
-                        }
-                    }
-
-                    gui.open();
-                }
-            }
-        });
-
-        return 1;
-    }
+//    public static int apoli(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+//        ServerPlayerEntity player = context.getSource().getPlayer();
+//        ServerPlayerEntity requestedPlayer = getRequestedPlayer(context);
+//
+//        boolean canModify = Permissions.check(context.getSource(), permModify, true);
+//
+//        Permissions.check(requestedPlayer.getUuid(), permProtected, false).thenAcceptAsync(isProtected -> {
+//            if (isProtected) {
+//                context.getSource().sendError(Text.literal(msgProtected));
+//            } else {
+//                List<InventoryPower> inventories = PowerHolderComponent.getPowers(requestedPlayer,
+//                        InventoryPower.class);
+//                if (inventories.isEmpty()) {
+//                    context.getSource().sendError(Text.literal("Requested player has no inventory power"));
+//                } else {
+//                    SimpleGui gui = new SavingPlayerDataGui(ScreenHandlerType.GENERIC_9X5, player, requestedPlayer);
+//                    gui.setTitle(requestedPlayer.getName());
+//                    addBackground(gui);
+//                    int index = 0;
+//                    for (InventoryPower inventory : inventories) {
+//                        for (int i = 0; i < inventory.size(); i++) {
+//                            gui.setSlotRedirect(index, canModify ? new Slot(inventory, i, 0, 0) : new UnmodifiableSlot(inventory, i));
+//                            index += 1;
+//                        }
+//                    }
+//
+//                    gui.open();
+//                }
+//            }
+//        });
+//
+//        return 1;
+//    }
 
     private static ServerPlayerEntity getRequestedPlayer(CommandContext<ServerCommandSource> context)
             throws CommandSyntaxException {
@@ -169,10 +163,10 @@ public class ViewCommand {
 
         if (requestedPlayer == null) {
             requestedPlayer = minecraftServer.getPlayerManager().createPlayer(requestedProfile, SyncedClientOptions.createDefault());
-            NbtCompound compound = minecraftServer.getPlayerManager().loadPlayerData(requestedPlayer);
-            if (compound != null) {
+            Optional<NbtCompound> compound = minecraftServer.getPlayerManager().loadPlayerData(requestedPlayer);
+            if (compound.isPresent()) {
                 ServerWorld world = minecraftServer.getWorld(
-                        DimensionType.worldFromDimensionNbt(new Dynamic<>(NbtOps.INSTANCE, compound.get("Dimension")))
+                        DimensionType.worldFromDimensionNbt(new Dynamic<>(NbtOps.INSTANCE, compound.get().get("Dimension")))
                                 .result().get());
 
                 if (world != null) {
