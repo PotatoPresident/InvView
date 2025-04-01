@@ -163,14 +163,17 @@ public class ViewCommand {
 
         if (requestedPlayer == null) {
             requestedPlayer = minecraftServer.getPlayerManager().createPlayer(requestedProfile, SyncedClientOptions.createDefault());
-            Optional<NbtCompound> compound = minecraftServer.getPlayerManager().loadPlayerData(requestedPlayer);
-            if (compound.isPresent()) {
-                ServerWorld world = minecraftServer.getWorld(
-                        DimensionType.worldFromDimensionNbt(new Dynamic<>(NbtOps.INSTANCE, compound.get().get("Dimension")))
-                                .result().get());
+            Optional<NbtCompound> compoundOpt = minecraftServer.getPlayerManager().loadPlayerData(requestedPlayer);
+            if (compoundOpt.isPresent()) {
+                NbtCompound compound = compoundOpt.get();
+                if (compound.contains("Dimension")) {
+                    ServerWorld world = minecraftServer.getWorld(
+                            DimensionType.worldFromDimensionNbt(new Dynamic<>(NbtOps.INSTANCE, compound.get("Dimension")))
+                                    .result().get());
 
-                if (world != null) {
-                    ((EntityAccessor) requestedPlayer).callSetWorld(world);
+                    if (world != null) {
+                        ((EntityAccessor) requestedPlayer).callSetWorld(world);
+                    }
                 }
             }
         }
