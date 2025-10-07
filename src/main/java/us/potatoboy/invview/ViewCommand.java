@@ -16,9 +16,11 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerConfigEntry;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.NbtReadView;
 import net.minecraft.storage.ReadView;
 import net.minecraft.text.Text;
 import net.minecraft.util.ErrorReporter;
@@ -162,15 +164,16 @@ public class ViewCommand {
 
     private static ServerPlayerEntity getRequestedPlayer(CommandContext<ServerCommandSource> context)
             throws CommandSyntaxException {
-        GameProfile requestedProfile = GameProfileArgumentType.getProfileArgument(context, "target").iterator().next();
-        ServerPlayerEntity requestedPlayer = minecraftServer.getPlayerManager().getPlayer(requestedProfile.getName());
+        PlayerConfigEntry playerConfigEntry = GameProfileArgumentType.getProfileArgument(context, "target").iterator().next();
+        ServerPlayerEntity requestedPlayer = minecraftServer.getPlayerManager().getPlayer(playerConfigEntry.name());
 
         // If player is not currently online
         if (requestedPlayer == null) {
-            requestedPlayer = new ServerPlayerEntity(minecraftServer, minecraftServer.getOverworld(), requestedProfile,
+            requestedPlayer = new ServerPlayerEntity(minecraftServer, minecraftServer.getOverworld(), new GameProfile(playerConfigEntry.id(), playerConfigEntry.name()),
                     SyncedClientOptions.createDefault());
             Optional<ReadView> readViewOpt = minecraftServer.getPlayerManager()
-                    .loadPlayerData(requestedPlayer, new ErrorReporter.Logging(LogUtils.getLogger()));
+                .loadPlayerData(playerConfigEntry).map(playerData -> NbtReadView.create(new ErrorReporter.Logging(LogUtils.getLogger()), minecraftServer.getRegistryManager(), playerData));
+            readViewOpt.ifPresent(requestedPlayer::readData);
 
             // Avoids player's dimension being reset to the overworld
             if (readViewOpt.isPresent()) {

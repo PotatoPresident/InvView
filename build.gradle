@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.10.+'
+    id 'fabric-loom' version '1.11.+'
     id 'maven-publish'
 }
 
@@ -28,12 +28,12 @@ repositories {
     maven { url 'https://maven.quiltmc.org/repository/release' }
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
-
-archivesBaseName = project.archives_base_name
 version = project.mod_version + "-" + project.minecraft_version + "+"
 group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
 
 dependencies {
     //to change the versions see the gradle.properties file
@@ -47,12 +47,10 @@ dependencies {
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
     modImplementation include("eu.pb4:sgui:${project.sgui_version}")
+    modImplementation include("me.lucko:fabric-permissions-api:${project.permission_api_version}")
 
 //    modImplementation "dev.emi:trinkets:${project.trinkets_version}"
 //    modImplementation "com.github.apace100:apoli:${project.apoli_version}"
-
-    modImplementation "me.lucko:fabric-permissions-api:0.4.0"
-    include "me.lucko:fabric-permissions-api:0.4.0"
 
     // Dev Mods - These can be commented/uncommented to test compatibility
     //modLocalRuntime "maven.modrinth:cloth-config:9.0.94+fabric"
@@ -73,6 +71,11 @@ processResources {
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
