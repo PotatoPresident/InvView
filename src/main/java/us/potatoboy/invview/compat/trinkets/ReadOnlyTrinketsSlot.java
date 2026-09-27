@@ -1,14 +1,18 @@
-package us.potatoboy.invview.gui;
+package us.potatoboy.invview.compat.trinkets;
 
-import net.minecraft.world.Container;
+import eu.pb4.trinkets.api.TrinketSlotAccess;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 
-public class UnmodifiableSlot extends Slot {
-    public UnmodifiableSlot(Container inventory, int index) {
-        super(inventory, index, 0, 0);
+final class ReadOnlyTrinketsSlot extends TrinketsSlot {
+    ReadOnlyTrinketsSlot(TrinketSlotAccess access) {
+        super(access);
+    }
+
+    @Override
+    public @NonNull ItemStack getItem() {
+        return super.getItem().copy();
     }
 
     @Override
@@ -17,7 +21,7 @@ public class UnmodifiableSlot extends Slot {
     }
 
     @Override
-    public boolean mayPickup(@NonNull Player playerEntity) {
+    public boolean mayPickup(@NonNull Player player) {
         return false;
     }
 
@@ -38,11 +42,17 @@ public class UnmodifiableSlot extends Slot {
 
     @Override
     public void setByPlayer(@NonNull ItemStack stack) {
+    }
 
+    @Override
+    public void setByPlayer(@NonNull ItemStack stack, @NonNull ItemStack previous) {
     }
 
     @Override
     public void set(@NonNull ItemStack stack) {
+    }
 
+    @Override
+    public void setChanged() {
     }
 }

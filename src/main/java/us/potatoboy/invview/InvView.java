@@ -15,10 +15,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.Util;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.TagValueOutput;
+import us.potatoboy.invview.compat.trinkets.TrinketsCompat;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +33,7 @@ public class InvView implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        isTrinkets = FabricLoader.getInstance().isModLoaded("trinkets");
+        isTrinkets = FabricLoader.getInstance().isModLoaded("trinkets_updated");
         isLuckPerms = FabricLoader.getInstance().isModLoaded("luckperms");
         isApoli = FabricLoader.getInstance().isModLoaded("apoli");
 
@@ -39,30 +41,23 @@ public class InvView implements ModInitializer {
 
             LiteralCommandNode<CommandSourceStack> viewNode = Commands
                     .literal("view")
-                    .requires(Permissions.require("invview.command.root", 2))
+                    .requires(Permissions.require(InvViewPermissions.ROOT, PermissionLevel.GAMEMASTERS))
                     .build();
 
             LiteralCommandNode<CommandSourceStack> invNode = Commands
                     .literal("inv")
-                    .requires(Permissions.require("invview.command.inv", 2))
+                    .requires(Permissions.require(InvViewPermissions.INVENTORY, PermissionLevel.GAMEMASTERS))
                     .then(Commands.argument("target", GameProfileArgument.gameProfile())
                             .executes(ViewCommand::inv))
                     .build();
 
             LiteralCommandNode<CommandSourceStack> echestNode = Commands
                     .literal("echest")
-                    .requires(Permissions.require("invview.command.echest", 2))
+                    .requires(Permissions.require(InvViewPermissions.ENDER_CHEST, PermissionLevel.GAMEMASTERS))
                     .then(Commands.argument("target", GameProfileArgument.gameProfile())
                             .executes(ViewCommand::eChest))
                     .build();
 
-//            LiteralCommandNode<ServerCommandSource> trinketNode = CommandManager
-//                    .literal("trinket")
-//                    .requires(Permissions.require("invview.command.trinket", 2))
-//                    .then(CommandManager.argument("target", GameProfileArgumentType.gameProfile())
-//                            .executes(ViewCommand::trinkets))
-//                    .build();
-//
 //            LiteralCommandNode<ServerCommandSource> apoliNode = CommandManager
 //                    .literal("origin-inv")
 //                    .requires(Permissions.require("invview.command.origin", 2))
@@ -75,7 +70,7 @@ public class InvView implements ModInitializer {
             viewNode.addChild(echestNode);
 
             if (isTrinkets) {
-//                viewNode.addChild(trinketNode);
+                TrinketsCompat.register(viewNode);
             }
             if (isApoli) {
 //                viewNode.addChild(apoliNode);

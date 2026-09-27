@@ -4,7 +4,8 @@
   "package": "us.potatoboy.invview.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "EntityAccessor"
+    "EntityAccessor",
+    "ContainerClickValidationMixin"
   ],
   "injectors": {
     "defaultRequire": 1

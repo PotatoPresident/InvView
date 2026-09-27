@@ -21,6 +21,7 @@ repositories {
     maven { url "https://maven.jamieswhiteshirt.com/libs-release/" }
     maven { url "https://maven.shedaniel.me/" }
     maven { url 'https://maven.nucleoid.xyz' }
+    maven { url 'https://maven.gnomecraft.net/releases/' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     mavenCentral()
     maven { url 'https://api.modrinth.com/maven' }
@@ -48,7 +49,14 @@ dependencies {
     implementation include("eu.pb4:sgui:${project.sgui_version}")
     implementation include("me.lucko:fabric-permissions-api:${project.permission_api_version}")
 
-//    modImplementation "dev.emi:trinkets:${project.trinkets_version}"
+    compileOnly "eu.pb4:trinkets:${project.trinkets_version}"
+    if (providers.gradleProperty('withTrinkets').map { it.toBoolean() }.getOrElse(false)) {
+        localRuntime "eu.pb4:trinkets:${project.trinkets_version}"
+    }
+    testImplementation "eu.pb4:trinkets:${project.trinkets_version}"
+    testImplementation platform('org.junit:junit-bom:5.12.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 //    modImplementation "com.github.apace100:apoli:${project.apoli_version}"
 
     // Dev Mods - These can be commented/uncommented to test compatibility
@@ -68,13 +76,17 @@ processResources {
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
     targetCompatibility = JavaVersion.VERSION_25
+}
+
+test {
+    useJUnitPlatform()
 }
 
 jar {
