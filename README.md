@@ -3,7 +3,7 @@ Allows you to get the inventory and echest of other players
 
 ## Trinkets Updated support
 
-With Trinkets Updated 4.1.1+26.2 installed, `/view trinket <target>` opens an online
+With Trinkets Updated 4.2.1+26.3 installed, `/view trinket <target>` opens an online
 or offline player's active trinket slots. InvView itself remains
 optional on the client; the usual client requirements of Trinkets still apply.
 
